@@ -48,6 +48,11 @@ object Motion {
     val Expand: FiniteAnimationSpec<IntSize> = tween(DurationLong, easing = EmphasizedDecelerate)
     val Shrink: FiniteAnimationSpec<IntSize> = tween(DurationShort, easing = EmphasizedAccelerate)
 
+    // Linear specs for gesture-driven seeking (e.g. NavHost predictive back).
+    // Non-linear easings make the seek feel non-1:1 against finger progress.
+    val SlideLinear: FiniteAnimationSpec<IntOffset> = tween(DurationLong, easing = LinearEasing)
+    val FadeLinear: FiniteAnimationSpec<Float> = tween(DurationLong, easing = LinearEasing)
+
     // Spring specs — expressive motion (low damping, high bounce)
     fun <T> springExpressiveSpatial(): FiniteAnimationSpec<T> = spring(
         dampingRatio = Spring.DampingRatioMediumBouncy,
@@ -74,6 +79,15 @@ fun AnimatedContentTransitionScope<*>.sharedAxisXPopEnter(): EnterTransition = s
 
 fun AnimatedContentTransitionScope<*>.sharedAxisXPopExit(): ExitTransition = slideOutOfContainer(SlideDirection.End, animationSpec = Motion.Slide) +
     fadeOut(animationSpec = Motion.FadeOut)
+
+// Predictive back variants: NavHost seeks these by gesture progress, so the
+// underlying spec must be linear — otherwise an emphasized curve maps a small
+// finger drag to a large slide (e.g. Emphasized(0.2) ≈ 0.5).
+fun AnimatedContentTransitionScope<*>.sharedAxisXPredictivePopEnter(): EnterTransition = slideIntoContainer(SlideDirection.End, animationSpec = Motion.SlideLinear) +
+    fadeIn(animationSpec = Motion.FadeLinear)
+
+fun AnimatedContentTransitionScope<*>.sharedAxisXPredictivePopExit(): ExitTransition = slideOutOfContainer(SlideDirection.End, animationSpec = Motion.SlideLinear) +
+    fadeOut(animationSpec = Motion.FadeLinear)
 
 // ---------- AnimatedVisibility shared-axis X (for modal overlays) ----------
 // Slides in from trailing edge and out to trailing edge — mirrors NavHost's

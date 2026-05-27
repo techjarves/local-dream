@@ -36,6 +36,8 @@ import io.github.xororz.localdream.ui.theme.sharedAxisXEnter
 import io.github.xororz.localdream.ui.theme.sharedAxisXExit
 import io.github.xororz.localdream.ui.theme.sharedAxisXPopEnter
 import io.github.xororz.localdream.ui.theme.sharedAxisXPopExit
+import io.github.xororz.localdream.ui.theme.sharedAxisXPredictivePopEnter
+import io.github.xororz.localdream.ui.theme.sharedAxisXPredictivePopExit
 
 class MainActivity : ComponentActivity() {
     private val requestStoragePermissionLauncher = registerForActivityResult(
@@ -166,8 +168,8 @@ private fun AppContent() {
         exitTransition = { sharedAxisXExit() },
         popEnterTransition = { sharedAxisXPopEnter() },
         popExitTransition = { sharedAxisXPopExit() },
-        predictivePopEnterTransition = { _ -> sharedAxisXPopEnter() },
-        predictivePopExitTransition = { _ -> sharedAxisXPopExit() },
+        predictivePopEnterTransition = { _ -> sharedAxisXPredictivePopEnter() },
+        predictivePopExitTransition = { _ -> sharedAxisXPredictivePopExit() },
     ) {
         composable(Screen.ModelList.route) {
             ModelListScreen(navController)
