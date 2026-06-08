@@ -1,5 +1,6 @@
 package io.github.xororz.localdream.ui.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -31,6 +33,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -80,6 +83,7 @@ fun PromptTagTextField(
     enabled: Boolean = true,
     showSuggestions: Boolean = true,
     onFocusChanged: (Boolean) -> Unit = {},
+    onDismissSuggestions: () -> Unit = {},
     highlightQuery: String? = null,
     overflowOffset: Int = -1,
     maxCollapsedLines: Int = 2,
@@ -144,6 +148,20 @@ fun PromptTagTextField(
     }
 
     if (showSuggestions && suggestions.isNotEmpty() && anchorWidthPx > 0) {
+        // Back gesture closes the suggestion popup. The Popup itself is not
+        // focusable (so it never steals IME focus), so dismissOnBackPress never
+        // fires; this BackHandler is what actually catches the gesture.
+        BackHandler(enabled = true) { onDismissSuggestions() }
+
+        // Reset the scroll to the top whenever the active query changes, so the
+        // best match is always the first row the user sees. Without this the
+        // LazyColumn keeps its previous scroll offset and a freshly promoted
+        // top match can end up scrolled off-screen.
+        val listState = rememberLazyListState()
+        LaunchedEffect(highlightQuery) {
+            listState.scrollToItem(0)
+        }
+
         val widthDp = with(density) { anchorWidthPx.toDp() }
         val gapDp = 8.dp
         val gapPx = with(density) { gapDp.toPx() }
@@ -180,6 +198,7 @@ fun PromptTagTextField(
                 elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
             ) {
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(max = maxHeightDp),

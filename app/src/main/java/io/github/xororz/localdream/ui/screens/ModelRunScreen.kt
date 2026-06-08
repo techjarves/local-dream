@@ -553,6 +553,15 @@ fun ModelRunScreen(modelId: String, navController: NavController, modifier: Modi
     var hasInitialized by remember { mutableStateOf(false) }
     var showReportDialog by remember { mutableStateOf(false) }
 
+    // The prompt fields live on page 0. When the user swipes to the result or
+    // history page the suggestion popup is anchored absolutely and would linger,
+    // so drop focus (which clears the suggestions) as soon as we leave page 0.
+    LaunchedEffect(pagerState.currentPage) {
+        if (pagerState.currentPage != 0) {
+            focusManager.clearFocus()
+        }
+    }
+
     var currentWidth by remember {
         mutableIntStateOf(
             if (model?.isSdxl ==
@@ -2434,6 +2443,7 @@ fun ModelRunScreen(modelId: String, navController: NavController, modifier: Modi
                                 isPromptFocused = it
                                 if (!it) promptSuggestions = emptyList()
                             },
+                            onDismissSuggestions = { promptSuggestions = emptyList() },
                         )
 
                         PromptTagTextField(
@@ -2457,6 +2467,7 @@ fun ModelRunScreen(modelId: String, navController: NavController, modifier: Modi
                                 isNegativePromptFocused = it
                                 if (!it) negativePromptSuggestions = emptyList()
                             },
+                            onDismissSuggestions = { negativePromptSuggestions = emptyList() },
                         )
 
                         Button(
