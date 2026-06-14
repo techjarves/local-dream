@@ -15,6 +15,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.TimeUnit
 import java.util.zip.ZipInputStream
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -183,6 +184,13 @@ class ModelDownloadService : Service() {
                     stopForeground(STOP_FOREGROUND_REMOVE)
                     stopSelf()
                 }
+            } catch (e: CancellationException) {
+                // Cancellation (service reclaimed, a new download started, or
+                // explicit cancel) is not a download failure: re-throw so it is
+                // not surfaced as an "Error" state. Emitting Error here is what
+                // produced the spurious "Job was cancelled" snackbar that could
+                // appear right after a successful download finished.
+                throw e
             } catch (e: Exception) {
                 Log.e(TAG, "Download failed", e)
 
