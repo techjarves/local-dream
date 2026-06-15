@@ -301,6 +301,7 @@ fun ModelListScreen(navController: NavController, modifier: Modifier = Modifier)
     var currentBaseUrl by remember { mutableStateOf("https://huggingface.co/") }
 
     val modelRepository = remember { ModelRepository.getInstance(context) }
+    val upscalerRepository = remember { UpscalerRepository.getInstance(context) }
 
     var showHelpDialog by remember { mutableStateOf(false) }
 
@@ -1268,6 +1269,7 @@ fun ModelListScreen(navController: NavController, modifier: Modifier = Modifier)
                                                         )
                                                         currentBaseUrl = tempBaseUrl
                                                         modelRepository.refreshAllModels()
+                                                        upscalerRepository.refreshBaseUrl()
                                                     }
                                                 }
                                             }
@@ -1304,6 +1306,7 @@ fun ModelListScreen(navController: NavController, modifier: Modifier = Modifier)
                                                 if (currentBaseUrl != newUrl) {
                                                     currentBaseUrl = newUrl
                                                     modelRepository.refreshAllModels()
+                                                    upscalerRepository.refreshBaseUrl()
                                                 }
                                             }
                                         },
@@ -1321,6 +1324,7 @@ fun ModelListScreen(navController: NavController, modifier: Modifier = Modifier)
                                                 if (currentBaseUrl != newUrl) {
                                                     currentBaseUrl = newUrl
                                                     modelRepository.refreshAllModels()
+                                                    upscalerRepository.refreshBaseUrl()
                                                 }
                                             }
                                         },

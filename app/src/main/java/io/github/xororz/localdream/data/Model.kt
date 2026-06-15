@@ -372,6 +372,18 @@ class UpscalerRepository private constructor(private val context: Context) {
         )
     }
 
+    // Re-read the base URL and rebuild the upscaler list so a base-URL change
+    // in settings takes effect without an app restart. Mirrors
+    // ModelRepository.refreshAllModels(); the singleton otherwise caches the
+    // URL captured at first ensureLoaded().
+    suspend fun refreshBaseUrl() {
+        refreshMutex.withLock {
+            if (!isLoaded) return
+            val baseUrl = generationPreferences.getBaseUrl()
+            upscalers = withContext(Dispatchers.IO) { initializeUpscalers(baseUrl) }
+        }
+    }
+
     suspend fun refreshUpscalerState(upscalerId: String) {
         refreshMutex.withLock {
             val current = upscalers
