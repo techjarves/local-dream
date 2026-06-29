@@ -97,6 +97,9 @@
     <string name="download_model">Download Model</string>
     <string name="download_model_hint">Are you sure to download %s ? Please do not exit the application during the download process.\n\nWe currently allow NPU model downloads for all Qualcomm chips, but older chips may not be able to run them.</string>
     <string name="download_done">Download Finished</string>
+    <string name="npu_unsupported_title">Your device is not supported</string>
+    <string name="npu_unsupported_description">NPU models are only supported on specific Qualcomm Snapdragon chips. Please try the CPU Models instead.</string>
+    <string name="know_more">Know More</string>
     <string name="unsupport_npu">Your device is not supported. Try the CPU model please.</string>
     <string name="cpu_models">CPU Models</string>
     <string name="npu_models">NPU Models</string>

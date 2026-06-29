@@ -1047,6 +1047,51 @@ fun ModelListScreen(navController: NavController, modifier: Modifier = Modifier)
                         }
                     }
 
+                    if (page == 1 && !Model.isDeviceSupported()) {
+                        item {
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                                ),
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(16.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Warning,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(20.dp),
+                                        )
+                                        Text(
+                                            text = stringResource(R.string.npu_unsupported_title),
+                                            style = MaterialTheme.typography.titleSmall,
+                                        )
+                                    }
+                                    Text(
+                                        text = stringResource(R.string.npu_unsupported_description),
+                                        style = MaterialTheme.typography.bodySmall,
+                                    )
+                                    TextButton(
+                                        onClick = { showHelpDialog = true },
+                                        modifier = Modifier.align(Alignment.End),
+                                        colors = ButtonDefaults.textButtonColors(
+                                            contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                                        ),
+                                    ) {
+                                        Text(stringResource(R.string.know_more))
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     items(
                         items = models,
                         key = { model -> model.id },
